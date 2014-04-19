@@ -1,0 +1,146 @@
+<bc-notifications></bc-notifications>
+<div ng-controller="GameController" class="row noselect" id="gameContainer">
+    <div class="col-xs-12 col-sm-6" id="wheelContainer">
+        <div>
+            <div style="float:left;z-index:121;position:absolute;left:5px;top:5px;" id="wheelTopLeft">
+                <div class="soundToggle"><img  ng-click="soundToggle()" ng-src="{{ soundIcon }}"/></div>
+            </div>
+            <div style="float:right;text-align:center;" id="wheelTopRight">
+                <button ng-click="autoSpin()" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                    <span ng-if="!autospin">Autobet: START</span>
+                    <span ng-if="autospin">Autobet: STOP</span>
+                </button>
+            </div>
+            <div style="margin:0px auto 0px auto;width:45px;height:40px;">
+                <img style="width:32px;height:38px;margin:0px auto;" src="img/circle/arrow.png"/>
+            </div>
+        </div>
+        <div class="wheelWrap">
+            <div class="wheel" ng-style="listposition">
+                <img class="wheelImage" ng-src="img/circle/{{ wheelImages[currentGame][1] }}" id="wheelImage" />
+                <img class="circleCenter" id="circleCenter" ng-src="img/circle/{{ wheelImages[currentGame][0] }}"  />
+                <button ng-disabled="withdrawPending" ng-click="spin()" class="noselect" id="wheelHitbox"></button>
+            </div>
+        </div>
+        <!--
+        <div class="wheelTotals">
+            <div style="position:absolute;left:5px;bottom:5px;text-align:center;" class="hidden-sm" id="wheelBottomLeft">
+                <div style="font-size:12px;">Total Spins</div>
+                <div><b>{{ circleTotal }}</b></div>
+            </div>
+            <div style="position:absolute;right:5px;bottom:5px;text-align:center;" class="hidden-sm" id="wheelBottomRight">
+                <div style="font-size:12px;">My Spins</div>
+                <div><b>{{ playerTotal }}</b></div>
+            </div>
+        </div>-->
+        <div class="visible-sm" style='z-index:2;position:relative;top:-15px;'>
+            <div class="wheelChoose">
+                <div><img ng-click='changeWheel(4)' ng-src="img/circle/{{ wheelImages[4][2] }}"/><br />2x</div>
+                <div><img ng-click='changeWheel(1)' ng-src="img/circle/{{ wheelImages[1][2] }}"/><br />3x</div>
+                <div><img ng-click='changeWheel(2)' ng-src="img/circle/{{ wheelImages[2][2] }}"/><br />5x</div>
+                <div><img ng-click='changeWheel(3)' ng-src="img/circle/{{ wheelImages[3][2] }}"/><br />10x</div>
+                <div><img ng-click='changeWheel(5)' ng-src="img/circle/{{ wheelImages[5][2] }}"/><br />15x</div>
+                <div><img ng-click='changeWheel(6)' ng-src="img/circle/{{ wheelImages[6][2] }}"/><br />25x</div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-1 hidden-sm" style='z-index:2;'>
+        <div class="wheelChoose">
+            <div><img ng-click='changeWheel(4)' ng-src="img/circle/{{ wheelImages[4][2] }}"/><br />2x</div>
+            <div><img ng-click='changeWheel(1)' ng-src="img/circle/{{ wheelImages[1][2] }}"/><br />3x</div>
+            <div><img ng-click='changeWheel(2)' ng-src="img/circle/{{ wheelImages[2][2] }}"/><br />5x</div>
+            <div><img ng-click='changeWheel(3)' ng-src="img/circle/{{ wheelImages[3][2] }}"/><br />10x</div>
+            <div><img ng-click='changeWheel(5)' ng-src="img/circle/{{ wheelImages[5][2] }}"/><br />15x</div>
+            <div><img ng-click='changeWheel(6)' ng-src="img/circle/{{ wheelImages[6][2] }}"/><br />25x</div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-5">
+        <img alt="BetCoin Circle Bitcoin Casino - Win Bitcoins!" src="img/circle.png" class="logo" />
+        <div ng-show="player._id" >
+            Deposit Address:
+            <bc-bitcoin-icons data-btc-address="{{player.deposit.btc.address}}"></bc-bitcoin-icons>
+            <div class="selectable">
+              <strong>
+                <a class="bitcoin-address" ng-click="sendBitcoins(player.deposit.btc.address)">
+                    {{ player.deposit.btc.address }}
+                </a>
+              </strong>
+            </div>
+
+            <div id="spinmessage">
+                <div style="color:#ffd479;" ng-show="minbetMsg">The minimum bet is 0.000001 BTC</div>
+                <div style="color:#ffd479;" ng-show="serverMsg">The game server cannot be reached</div>
+                <div style="color:#ffd479;" ng-show="minconfErr">At least 1 deposit has not been confirmed</div>
+                <div style="color:#ffd479;" ng-show="withdrawErr">Withdraw error, please try again</div>
+                <span ng-hide="hasError() || wheelSpinning || resultMultiplier != null">Spin the circle by pressing the Bitcoin in the middle</span>
+                <span ng-show="wheelSpinning"><a href="https://www.betcoin.tm/prize" target="_blank">BetCoin Prize<br>World's Best Bitcoin Lottery</a></span>
+                <span ng-show="resultMultiplier && !wheelSpinning">{{ resultMultiplier }} - You won {{ currencyAbbr }} {{ resultProfit | btc }}</span>
+            </div>
+            <div style="clear:both;width:90%;margin:0px auto;">
+                <div class="balance">
+                    <div>Bet:</div>
+                    <div class="numbers numbersWager">{{ currencyAbbr }} <input btc-wager class="btcWager form-control" ng-model="btcWager" /></div>
+                </div>
+                <div class="balance">
+                    <div>Credit:</div>
+                    <div class="numbers numbersBalance">{{ currencyAbbr }} {{ player.balance.btc | btc }}</div>
+                </div>
+            </div>
+            <div class="wagers">
+                <button class="btn btn-inverse btn-bet1" id="bet1p" ng-click="btcWager=betPercent(.01)">1%</button>
+                <button class="btn btn-inverse btn-bet1" id="bet10p" ng-click="btcWager=betPercent(.1)">10%</button>
+                <button class="btn btn-inverse btn-bet1" id="bet25p" ng-click="btcWager=betPercent(.25)">25%</button>
+                <button class="btn btn-inverse btn-bet1" id="bet50p" ng-click="btcWager=betPercent(.5)">50%</button>
+                <button class="btn btn-inverse btn-bet1" id="betmax" ng-click="btcWager=betPercent(1)">Max</button>
+                <button class="btn btn-inverse btn-bet1" id="betreset" ng-click="btcWager=0">Reset</button>
+            </div>
+            <div class="wagers">
+                <button class="btn btn-inverse btn-bet1" id="bet.001" ng-click="btcWager=setBet(.001)">{{ currencyAbbr }} .001</button>
+                <button class="btn btn-inverse btn-bet1" id="bet.01" ng-click="btcWager=setBet(.01)">{{ currencyAbbr }} .01</button>
+                <button class="btn btn-inverse btn-bet1" id="bet.1" ng-click="btcWager=setBet(.1)">{{ currencyAbbr }} .1</button>
+                <button class="btn btn-inverse btn-bet1" id="bet1" ng-click="btcWager=setBet(1)">{{ currencyAbbr }} 1</button>
+                <button class="btn btn-inverse btn-bet1" id="bet10" ng-click="btcWager=setBet(10)">{{ currencyAbbr }} 10</button>
+                <button class="btn btn-inverse btn-bet1" id="bet100" ng-click="btcWager=setBet(100)">{{ currencyAbbr }} 100</button>
+            </div>
+            <div slider id="sliderContainer" min="0" max="{{ player.balance.btc }}" step="10">
+                <div id="slider">
+                    <span id="sliderIndicator"></span><div id="sliderButton"></div>
+                </div>
+            </div>
+            <h3><span class="label label-danger" ng-bind="player.alias"></span></h3>
+            <div class="circle-withdraw" style="clear:both;">
+                <div ng-hide="withdrawPending">
+                    <a ng-hide="player.email" style="cursor:pointer;" ng-click="initiateWithdraw()">
+                        <button ng-disabled="wheelSpinning" class="btn btn-spin">Cash Out</button>
+                    </a>
+                    <button ng-disabled="wheelSpinning" ng-click="showPopover('Next Game ID:')" id="proof"
+                        class="btn btn-spin">
+                        <span class="glyphicon glyphicon-file"></span>
+                        Proof
+                    </button>
+                </div>
+                <div ng-show="withdrawPending">
+                    <b>Please confirm that you want to cash out</b><br>
+                    <button ng-disabled="wheelSpinning" ng-click="cashOut()" class="btn btn-default">Cash Out</button>
+                    <button class="btn btn-default" ng-click="withdrawPending = false">Return to game</button>
+                </div>
+            </div>
+            <div>
+                <small style="display:none">
+                    <dl class="dl-horizontal">
+                        <dt>Next Game ID:</dt><dd>{{ nextGameId }}</dd>
+                        <dt>SHA256:</dt><dd style="word-wrap: break-word;">{{ sha256 }}</dd>
+                    </dl>
+                </small>
+                <div class="row">
+                <bc-client-seed reset="isResetSeed" seed-value="clientSeedValue" init-seed-value="gameData.client_seed"></bc-client-seed>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+</div>

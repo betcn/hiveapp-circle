@@ -1,0 +1,16 @@
+<div>
+    <table class="table table-bordered circlesTable">
+        <thead>
+            <tr>
+                <th>Alias</th>
+                <th>BTC Wagered</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-ng-repeat="player in leaderboard">
+                <td>{{ player._id }}</td>
+                <td>{{ player.wagered | btc }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

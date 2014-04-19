@@ -1,0 +1,23 @@
+<div>
+    <a ng-click="sendBitcoins(btcAddress)">
+        <img src="img/multibit-mini.png"/>
+    </a>
+</div>
+<!--   QR Modal-->
+<div id="qrModal" class="qc-modal modal fade">
+    <div class="modal-dialog qr-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <div><small>{{btcAddress}}</small></div>
+            </div>
+            <div class="modal-body">
+                <img ng-show="showQR" src="{{qrcodeUrl}}"/>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end QR Modal -->

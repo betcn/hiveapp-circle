@@ -1,0 +1,163 @@
+<div class="tabcontent">
+  <h1>How to Play</h1>
+  <p class="ng-binding"><b class="ng-binding">财神轮是</b>一种圆盘博彩游戏，允许您用电子货币比特币下注。这种游戏玩起来既简单又有趣，可以赢更多比特币！</p>
+  <br>
+  <ol style="padding-left:40px;">
+    <li class="ng-binding"><b class="ng-binding">输入您的取款地址</b>，选择“开始游戏</li>
+    <br>
+    <li class="ng-binding"><b class="ng-binding">将比特币充入游戏为您设定的专用比特币存款地址</b> </li>
+    <br>
+    <li class="ng-binding"><b class="ng-binding">用滑块、余额百分比按钮、增量按钮或在下注框上单击并输入金额</b>，选择下注金额</li>
+    <br>
+    <li class="ng-binding"><b class="ng-binding">单击圆盘中间的比特币以旋转财神轮</b> </li>
+    <br>
+    <li class="ng-binding">结果大于 1.0x 表示旋转赢了，会使您的余额增加，结果小于 1.0x 表示旋转输了，会使您余额减少</li>
+    <br>
+    <li class="ng-binding">检查您的进度，用游戏屏幕下方的游戏“高手排名榜”和“近期游戏”标签，可以跟踪全球的玩家</li>
+    <br>
+    <li class="ng-binding">静止 30 分钟后或关闭浏览器后，您的余额会自动返还给您</li>
+    <br>
+  </ol>
+  <p class="ng-binding"><strong class="ng-binding">结果返还计算：</strong>余额 - 赌注 + （赌注 × 结果）</p>
+  <br>
+  <table class="table">
+    <tbody><tr>
+      <td class="ng-binding">例如：</td>
+      <td class="ng-binding">
+        余额 = 5<br>
+       赌注 = 1<br>
+       结果 = 2x<br><br>
+
+       5 - 1 + (1 x 2) = 6 <br><br>
+
+       新余额 = 6
+     </td>
+   </tr>
+   <tr>
+    <td class="ng-binding">例如：</td>
+    <td class="ng-binding">
+    余额= 5<br>
+    赌注= 1<br>
+    结果= .75<br><br>
+
+    5 - 1 + (1 x .75) = 4.75<br><br>
+
+    新余额= 4.75
+    </td>
+   </tr>
+
+  </tbody></table>
+
+
+
+  <div class="">
+
+      <h4 id="myModalLabel">可验证公平的博彩</h4>
+      <p>财神轮享有可验证公平的特征，每次旋转都是随机的，可以立即独立检验。</p>
+      <br>
+      <h4>过程</h4>
+      <br>
+      <ol style="padding-left:40px;">
+       <li>我们创建服务端“种子”来生成随机数字。</li>
+       <br>
+       <li>圆盘 17 种结果的最初排列 (若是25倍钻石轮的话就 26种结果）经过随机处理。</li>
+       <br>
+       <li>然后，服务器会用服务器生成的种子对初始排列初始化。这就是服务端排列。</li>
+       <br>
+       <li>旋转之前，初始排列顺序是公开的，而服务端种子的 SHA256 哈希及初始排列均经过加密。</li>
+       <br>
+       <li>按下旋转按钮后，我们立即在您的浏览器中用JS脚本语言(Javascript)生成随机种子。该种子直接影响旋转结果。</li>
+       <br>
+       <li>服务端排列用客户种子随机处理。排列的第一项就是结果。</li>
+      </ol>
+<pre class="data">var crypto = require('crypto')
+
+var checkGame = function(gameInit) {
+   console.log('checking hash');
+   console.log('init array: %s', gameInit.init_array);
+   console.log('server seed: %s', gameInit.server_seed);
+   var sha = crypto.createHash('sha256');
+   sha.update(JSON.stringify({
+       initialArray: gameInit.init_array,
+       serverSeed: gameInit.server_seed
+   }));
+   var checkHash = sha.digest('hex');
+   console.log('saved hash: %s', gameInit.initial_hash);
+   console.log('check hash: %s', checkHash);
+   var initArray = gameInit.init_array.split(',');
+
+   console.log('getting server shuffle');
+   var serverArray = seededShuffle(initArray, gameInit.server_seed);
+   console.log('server shuffle: %s', serverArray.join(','));
+
+   var finalArray = seededShuffle(serverArray, gameInit.client_seed);
+   console.log('final array: %s', finalArray.join(','));
+   console.log('saved final: %s', gameInit.final_array);
+};
+
+
+var seededShuffle = function(items, seed) {
+   var counter = items.length;
+   var partialDivisor = (parseInt('ffff', 16) + 1);
+   var spinMin = 0;
+   var spinMax = items.length - 1;
+   while (counter &gt; 0) {
+       var sha = crypto.createHash('sha256');
+       var partial = sha.update("" + counter + seed).digest('hex').substring(0, 4);
+       var rand = parseInt(partial, 16) / partialDivisor;
+       var randIndex = Math.floor(rand * (spinMax - spinMin + 1) + spinMin);
+       counter--;
+       var tmp = items[counter];
+       items[counter] = items[randIndex];
+       items[randIndex] = tmp;
+   }
+   return items;
+};
+</pre>         
+  </div>
+
+
+      <br>
+      <h4>我为什么不能提高下注金额？</h4>
+      <br>
+      <p>答：最高赌注限额根据同时上线的玩家人数以及每个玩家下注金额由系统自动调整。由于本游戏庄稼金库
+      有限，若系统发现赌注总额在同时赢的情况下超过了系统可瞬间返还的额度（而这个只有在下注之后，
+      但转轮之前才能确定），下注金额在对输赢进行判断前将自动返还至万家的存款余额。最高赌注金额会又
+      即时动态变化，因此您可以稍后再试增加赌注金额。
+      </p>
+      <br>
+      <h4>每次旋转有最低赌注吗？</h4>
+      <br>
+      <p>答：没有，您用多少方份(萨图西)玩都可以，但您下的赌注越多，您收到的资励点数也越多。
+</p><p></p>
+      <br>
+      <h4>我提取余额之前为什么必须等待确认？
+
+</h4>
+      <br>
+      <p>答：为了确保财神轮中为其客户提供既安全的又稳定的游戏环境，而同时杜绝一些人滥用游戏，
+我们采用了以下取款确认处理方案：
+</p>
+      <ul><li>存入 0.1BTC以下所产生的赢得款: 2确认</li>
+      <li>存入 0.1BTC - 1BTC所产生的赢得款: 3次确认</li><li>
+      存入 1BTC - 10BTC所产生的赢得款: 4次确认</li><li>
+      存入10BTC - 100BTC所产生的赢得款: 5次确认</li><li>
+      存入100BTC以上所产生的赢得款: 6次确认</li></ul>
+      <br>
+
+      <h4>为什么我的余额中看不到存款？
+</h4>
+      <br>
+      <p>答：您的存款会在您将其发送到个人存款地址后数秒后显示出来。如果未显示出来，请尝试刷新页面  或重启游戏，或与我们联系。我们还没遇到过存款不入账的情况。
+
+</p>
+      <br>
+      <h4>财神轮的庄家赔率是多少？
+</h4>
+      <br>
+      <p>答：庄家优势是 1.65%。相比而言，圆盘的庄家优势是 5.26%。
+</p>
+      <br>
+    </ol></div>  
+
+</div>
