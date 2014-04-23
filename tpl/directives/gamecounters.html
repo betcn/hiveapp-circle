@@ -1,0 +1,10 @@
+<div class="{{scrollClass}}">
+    <div><h4>Bets processed to date:</h4></div>
+    <div><h5>{{ count | number }}</h5></div>
+    <hr/>
+    <div><h4>Total paid out to players:</h4></div>
+    <div><h5>BTC ฿{{ sum | number }}</h5></div>
+    <div>USD {{ exchange * sum | currency }}</div>
+    <hr/>
+    <div>1 BTC = {{ exchange | currency }} USD</div>
+</div>
