@@ -1,8 +1,8 @@
 {
   "name": "BetCoin Circle",
   "id": "tm.betcoin.circle",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "BetCoin",
-  "description": "Hive BetCoin Circle Game",
+  "description": "BetCoin Circle: Win up to 25x your bet!",
   "icon": "hiveapp-icon.png"
 }
